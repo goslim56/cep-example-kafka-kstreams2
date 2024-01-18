@@ -1,6 +1,9 @@
 package org.example.service;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -53,5 +56,17 @@ public class WordCountRestService {
   @PostMapping("/message")
   public void addMessage(@RequestBody String message) {
     kafkaProducer.sendMessage(message);
+  }
+
+  @PostMapping("/message2")
+  public void addMessage(@RequestBody Message message) {
+    kafkaProducer.sendMessage2(message.message);
+  }
+
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  public static class Message {
+    String message;
   }
 }

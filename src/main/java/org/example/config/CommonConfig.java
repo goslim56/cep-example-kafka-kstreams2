@@ -10,4 +10,5 @@ public class CommonConfig {
   public RestTemplate restTemplate() {
     return new RestTemplate();
   }
+  public static final String PROCESSOR_API_SUFFIX = "processorapi";
 }

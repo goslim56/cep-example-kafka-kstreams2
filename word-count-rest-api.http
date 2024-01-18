@@ -13,3 +13,11 @@ Content-Type: application/json
 {
   "message": "In the small village, nestled in a peaceful valley surrounded by mountains, there was a small stream that flowed through the village center, where villagers often gathered to enjoy the cool water and the soothing sounds of the flowing stream. The village children loved playing near the stream, watching the fish swim in the clear water, and listening to the birds singing in the trees surrounding the village. The village elders often told stories of the village's history, stories about the founders of the village, tales of the hard times the village had endured, and legends of the mysterious mountains surrounding the village."
 }
+
+### Add Message
+POST http://localhost:8080/message2
+Content-Type: application/json
+
+{
+  "message": "김경한 김경한 짱짱맨 대한민국 전세제도 폐지하라"
+}

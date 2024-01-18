@@ -23,4 +23,15 @@ public class KafkaProducer {
           }
         });
   }
+
+  public void sendMessage2(String message) {
+    kafkaTemplate.send("input-processor-topic", message)
+        .whenComplete((result, ex) -> {
+          if (ex == null) {
+            log.info("Message sent to topic: {}", message);
+          } else {
+            log.error("Failed to send message", ex);
+          }
+        });
+  }
 }
