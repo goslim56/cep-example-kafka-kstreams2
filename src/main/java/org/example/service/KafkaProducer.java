@@ -27,7 +27,7 @@ public class KafkaProducer {
     }
 
     public void sendMessage2(SearchWord searchWord) {
-        kafkaTemplate2.send("input-processor-topic", searchWord)
+        kafkaTemplate2.send("input-processor-topic", searchWord.getWord(), searchWord)
                 .whenComplete((result, ex) -> {
                     if (ex == null) {
                         log.info("Message sent to topic: {}", searchWord);

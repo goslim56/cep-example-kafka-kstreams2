@@ -63,7 +63,7 @@ public class WordCountProcessor implements Processor<String, SearchWord, Long, C
             Long wordCount = windowStore.fetch(word, windowStartTimestamp);
             Long newValue = (wordCount == null) ? 1L : wordCount + 1;
             windowStore.put(word, newValue, windowStartTimestamp);
-            log.info("windowStore put word/count : {}/{} ({})", word, newValue, windowStartTimestamp);
+            log.info("windowStore put word/count/part : {}/{}/{} ({})", word, newValue, context.taskId(),windowStartTimestamp);
         } catch (Exception e) {
             log.error("process Exception: {}", e.getMessage());
         }

@@ -56,11 +56,7 @@ public class AggregationProcessor implements Processor<Long, CountWord, Long, Wo
 
             String word = windowedCount.key.key();
             Long count = windowedCount.value;
-            long winStart = windowedCount.key.window().start();
-            long windEnd = windowedCount.key.window().end();
-
-//            tempCountWordSet.add(new TempCountWord(word, count));
-            tempCountWords.add(new TempCountWord(word, count, timestampToDate(windowStartTimestamp)));
+            tempCountWords.add(new TempCountWord(word, count));
             tempCountWords.sort(TempCountWord::compareTo);
             while (tempCountWords.size() > 5) {
                 tempCountWords.remove(5);
@@ -87,8 +83,8 @@ public class AggregationProcessor implements Processor<Long, CountWord, Long, Wo
                         new WordRanking.RankWord(tempCountWords.get(3)),
                         new WordRanking.RankWord(tempCountWords.get(4))
                 ),
-                windowStartTimestamp,
-                windowEndTimestamp
+                timestampToDate(windowStartTimestamp),
+                timestampToDate(windowEndTimestamp)
 
         );
         context.forward(new Record<>(windowStartTimestamp, wordRanking, timestamp));
@@ -107,7 +103,7 @@ public class AggregationProcessor implements Processor<Long, CountWord, Long, Wo
             Long wordCount = windowStore.fetch(word, aggregationTime);
             Long newCount = (wordCount == null) ? count : wordCount + count;
             windowStore.put(word, newCount, record.key());
-            log.info("AggregationProcessor windowStore put word/count : {}/{} ({})", word, newCount, aggregationTime);
+            log.info("AggregationProcessor windowStore put word/count/part : {}/{}/{} ({})", word, newCount, context.taskId(),aggregationTime);
         } catch (Exception e) {
             log.error("process Exception: {}", e.getMessage());
         }
@@ -127,9 +123,10 @@ public class AggregationProcessor implements Processor<Long, CountWord, Long, Wo
     private String timestampToDate(Long timestamp) {
         try {
             Date date = new Date(timestamp);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ss.SSS", Locale.KOREA);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.KOREA);
             return sdf.format(new Date(timestamp));
         } catch (Exception e) { //this generic but you can control another types of exception
+            System.out.println("e123123 = " + e);
             return "날짜버그";
         }
     }
@@ -144,7 +141,6 @@ public class AggregationProcessor implements Processor<Long, CountWord, Long, Wo
     public static class TempCountWord implements Comparable<TempCountWord> {
         private String word; // ex) "maple" | "랩업하는법" | "캐시" | "메이플",
         private Long count; // ex) "2020–08–28T09:20:26.187"
-        private String date; // ex) "2020–08–28T09:20:26.187"
 
         @Override
         public int compareTo(@NotNull TempCountWord o) {

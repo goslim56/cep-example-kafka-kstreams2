@@ -13,8 +13,8 @@ import java.util.ArrayList;
 @NoArgsConstructor
 public class WordRanking {
     private Ranking ranking; // ex) "maple" | "랩업하는법" | "캐시" | "메이플",
-    private Long windowStartTimestamp; // ex) "2020–08–28T09:20:26.187"
-    private Long windowEndTimestamp; // ex) "2020–08–28T09:20:26.187"
+    private String windowStartTimestamp; // ex) "2020–08–28T09:20:26.187"
+    private String windowEndTimestamp; // ex) "2020–08–28T09:20:26.187"
 
     @AllArgsConstructor
     @NoArgsConstructor
@@ -22,16 +22,13 @@ public class WordRanking {
     public static class RankWord {
         private String words;
         private Long count;
-        private String date;
         public RankWord (AggregationProcessor.TempCountWord tempCountWord) {
             if (tempCountWord == null) {
                 words = null;
                 count = null;
-                date = null;
             } else {
                 words = tempCountWord.getWord();
                 count = tempCountWord.getCount();
-                date = tempCountWord.getDate();
             }
         }
     }
