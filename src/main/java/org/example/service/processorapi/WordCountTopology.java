@@ -14,6 +14,8 @@ import org.example.model.serde.CountWordSerde;
 import org.example.model.serde.SearchWordSerde;
 import org.example.model.serde.WordRankingSerde;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +32,7 @@ public class WordCountTopology {
 
 
     @Autowired
-    void buildPipeline(KafkaStreamsConfiguration defaultKafkaStreamsConfigProcessorApi) {
+    void buildPipeline(KafkaStreamsConfiguration defaultKafkaStreamsConfig) {
 
         Topology topology = new Topology();
 
@@ -49,7 +51,7 @@ public class WordCountTopology {
                         LONG_SERDE), "Process2")
                 .addSink("Sink2", "word-ranking-topic", LONG_SERDE.serializer(), WORD_RANKING_SERDE.serializer(), "Process2");
 
-        KafkaStreams streams = new KafkaStreams(topology, new StreamsConfig(defaultKafkaStreamsConfigProcessorApi.asProperties()));
+        KafkaStreams streams = new KafkaStreams(topology, new StreamsConfig(defaultKafkaStreamsConfig.asProperties()));
         streams.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

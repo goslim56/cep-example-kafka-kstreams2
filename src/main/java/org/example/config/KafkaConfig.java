@@ -35,7 +35,6 @@ import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
 @EnableKafka
-@EnableKafkaStreams
 public class KafkaConfig {
 
   @Value(value = "${spring.kafka.bootstrap-servers}")
@@ -45,20 +44,20 @@ public class KafkaConfig {
   @Value(value = "${spring.kafka.streams.state.dir}")
   private String stateStoreLocation;
 
+//  @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
+//  KafkaStreamsConfiguration kStreamsConfig() {
+//    Map<String, Object> props = new HashMap<>();
+//    props.put(APPLICATION_ID_CONFIG, "streams-app");
+//    props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+//    props.put(APPLICATION_SERVER_CONFIG, applicationServerAddress); // for interactive query service
+//    props.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+//    props.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+//    // configure the state location to allow tests to use clean state for every run
+//    props.put(STATE_DIR_CONFIG, stateStoreLocation);
+//
+//    return new KafkaStreamsConfiguration(props);
+//  }
   @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
-  KafkaStreamsConfiguration kStreamsConfig() {
-    Map<String, Object> props = new HashMap<>();
-    props.put(APPLICATION_ID_CONFIG, "streams-app");
-    props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-    props.put(APPLICATION_SERVER_CONFIG, applicationServerAddress); // for interactive query service
-    props.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-    props.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-    // configure the state location to allow tests to use clean state for every run
-    props.put(STATE_DIR_CONFIG, stateStoreLocation);
-
-    return new KafkaStreamsConfiguration(props);
-  }
-  @Bean(name = "defaultKafkaStreamsConfigProcessorApi")
   KafkaStreamsConfiguration kStreamsConfigProcessorAPI() {
     Map<String, Object> props = new HashMap<>();
     props.put(APPLICATION_ID_CONFIG, "streams-app-" + PROCESSOR_API_SUFFIX);
@@ -75,8 +74,9 @@ public class KafkaConfig {
     return new KafkaStreamsConfiguration(props);
   }
 
-  @Bean(name = "kafkaTemplate2")
-  public KafkaTemplate<String, SearchWord> kafkaTemplate2(){
+//  @Bean(name = "kafkaTemplate2")
+  @Bean
+  public KafkaTemplate<String, SearchWord> kafkaTemplate(){
     Map<String, Object> props = new HashMap<>();
     props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
     props.put(APPLICATION_SERVER_CONFIG, applicationServerAddress); // for interactive query service
@@ -86,14 +86,14 @@ public class KafkaConfig {
     return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
   }
 
-  @Bean(name = "kafkaTemplate")
-  public KafkaTemplate<String, String> kafkaTemplate(){
-    Map<String, Object> props = new HashMap<>();
-    props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-    props.put(APPLICATION_SERVER_CONFIG, applicationServerAddress); // for interactive query service
-
-    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
-  }
+//  @Bean(name = "kafkaTemplate")
+//  public KafkaTemplate<String, String> kafkaTemplate(){
+//    Map<String, Object> props = new HashMap<>();
+//    props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+//    props.put(APPLICATION_SERVER_CONFIG, applicationServerAddress); // for interactive query service
+//
+//    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
+//  }
 
 
   @Bean
