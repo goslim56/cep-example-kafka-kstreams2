@@ -11,6 +11,7 @@ import org.apache.kafka.streams.StoreQueryParameters;
 import org.apache.kafka.streams.state.HostInfo;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.example.model.SearchWord;
 import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,15 +59,13 @@ public class WordCountRestService {
     kafkaProducer.sendMessage(message);
   }
 
-  @PostMapping("/message2")
-  public void addMessage(@RequestBody Message message) {
-    kafkaProducer.sendMessage2(message.message);
-  }
+//  @PostMapping("/message2")
+//  public void addMessage(@RequestBody Message message) {
+//    kafkaProducer.sendMessage2(message.message);
+//  }
 
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  public static class Message {
-    String message;
+  @PostMapping("/message2")
+  public void addMessage(@RequestBody SearchWord searchWord) {
+    kafkaProducer.sendMessage2(searchWord);
   }
 }

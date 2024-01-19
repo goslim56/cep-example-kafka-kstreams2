@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.streams.StreamsConfig;
@@ -16,6 +17,9 @@ import org.apache.kafka.streams.state.HostInfo;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
+import org.example.model.SearchWord;
+import org.example.model.serde.SearchWordSerde;
+import org.example.model.serde.SearchWordSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +29,9 @@ import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
 import org.springframework.kafka.config.TopicBuilder;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
 @EnableKafka
@@ -68,6 +75,26 @@ public class KafkaConfig {
     return new KafkaStreamsConfiguration(props);
   }
 
+  @Bean(name = "kafkaTemplate2")
+  public KafkaTemplate<String, SearchWord> kafkaTemplate2(){
+    Map<String, Object> props = new HashMap<>();
+    props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+    props.put(APPLICATION_SERVER_CONFIG, applicationServerAddress); // for interactive query service
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, SearchWordSerializer.class);
+
+    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
+  }
+
+  @Bean(name = "kafkaTemplate")
+  public KafkaTemplate<String, String> kafkaTemplate(){
+    Map<String, Object> props = new HashMap<>();
+    props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+    props.put(APPLICATION_SERVER_CONFIG, applicationServerAddress); // for interactive query service
+
+    return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
+  }
+
 
   @Bean
   NewTopic inputTopic() {
@@ -85,8 +112,16 @@ public class KafkaConfig {
             .build();
   }
   @Bean
+  NewTopic internalTopic2() {
+    return TopicBuilder.name("word-cnt-topic")
+            .partitions(3)
+            .replicas(2)
+            .build();
+  }
+
+  @Bean
   NewTopic outputTopic2() {
-    return TopicBuilder.name("output-processor-topic")
+    return TopicBuilder.name("word-ranking-topic")
             .partitions(3)
             .replicas(2)
             .build();
